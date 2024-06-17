@@ -1,0 +1,27 @@
+name: Flutter CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: "latest"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run unit tests
+        run: flutter test test/unit
+
+      - name: Run integration tests
+        run: flutter test test/integration
+
+      - name: Run end-to-end tests
+        run: flutter drive \ --driver=test_driver/integration_test.dart \ --target=test/e2e/calculator_e2e_test.dart
