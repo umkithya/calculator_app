@@ -20,4 +20,5 @@ jobs:
         run: flutter pub get
 
       - name: Run end-to-end tests
-        run: flutter drive \ --driver=test_driver/integration_test.dart \ --target=test/e2e/calculator_e2e_test.dart
+        run: flutter drive --driver=test_driver/integration_test_driver.dart --target=test/e2e/calculator_e2e_test.dart
+
