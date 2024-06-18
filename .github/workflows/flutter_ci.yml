@@ -64,4 +64,4 @@ jobs:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
           profile: Nexus 6
-          script: flutter test integration_test --verbose
+          script: flutter drive --driver=test_driver/integration_test.dart --target=test/e2e/calculator_e2e_test.dart
