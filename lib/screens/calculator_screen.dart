@@ -39,6 +39,7 @@ class CalculatorScreen extends StatelessWidget {
                   builder: (context, constraints) => FittedBox(
                     fit: BoxFit.contain,
                     child: Text(
+                      key: const ValueKey('display'),
                       display.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

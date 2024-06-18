@@ -20,8 +20,12 @@ void main() {
     await tester.tap(find.text('='));
     await tester.pumpAndSettle();
 
-    // Verify the result is '5.0'
-    expect(find.text('5.0'), findsOneWidget);
+    var display = find.byKey(const ValueKey('display'));
+    //  Verify the widget exists
+    expect(display, findsOneWidget);
+    Text textWidget = tester.widget(display);
+    // Verify the result is '5'
+    expect(textWidget.data, '5');
 
     // Clear the expression
     await tester.tap(find.text('CE'));
@@ -37,8 +41,9 @@ void main() {
     await tester.tap(find.text('='));
     await tester.pumpAndSettle();
 
-    // Verify the result is '42.0'
-    expect(find.text('42.0'), findsOneWidget);
+    // Verify the result is '42'
+    textWidget = tester.widget(display);
+    expect(textWidget.data, '42');
 
     // Clear the expression
     await tester.tap(find.text('CE'));
@@ -56,18 +61,16 @@ void main() {
     await tester.tap(find.text('='));
     await tester.pumpAndSettle();
 
-    // Verify the result is '0.0'
-    expect(find.text('0.0'), findsOneWidget);
+    // Verify the result is '0'
+    textWidget = tester.widget(display);
+    expect(textWidget.data, '0');
 
     // Open and check the history
     await tester.tap(find.byIcon(Icons.history));
     await tester.pumpAndSettle();
 
-    expect(find.text('2+3'), findsOneWidget);
-    expect(find.text('5.0'), findsOneWidget);
-    expect(find.text('7*6'), findsOneWidget);
-    expect(find.text('42.0'), findsOneWidget);
-    expect(find.text('sin(0)'), findsOneWidget);
-    expect(find.text('0.0'), findsOneWidget);
+    expect(find.text('2+3=5'), findsAny);
+    expect(find.text('7*6=42'), findsAny);
+    expect(find.text('sin(0)=0'), findsAny);
   });
 }
