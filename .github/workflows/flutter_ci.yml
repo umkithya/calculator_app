@@ -41,6 +41,13 @@ jobs:
         run: |
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86"
+      - name: Configure KVM Permissions
+        run: |
+          # Add user to kvm group
+          sudo gpasswd -a $USER kvm
+          # Set permissions for /dev/kvm
+          sudo chown root:kvm /dev/kvm
+          sudo chmod 660 /dev/kvm
       - name: Create AVD
         env:
           ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
