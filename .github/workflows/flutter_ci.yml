@@ -5,6 +5,10 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        api-level: [21, 23, 29]
+        target: [default, google_apis]
 
     steps:
       - uses: actions/checkout@v2
@@ -19,57 +23,20 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '11'
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
-      - name: Download and set up Android SDK
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          unzip commandlinetools.zip -d $HOME/android-sdk/cmdline-tools
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
-      - name: Install Android SDK packages
-        env:
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-        run: |
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "system-images;android-30;google_apis;x86"
-      - name: Configure KVM Permissions
-        run: |
-          # Add user to kvm group
-          sudo gpasswd -a $USER kvm
-          # Set permissions for /dev/kvm
-          sudo chown root:kvm /dev/kvm
-          sudo chmod 660 /dev/kvm
-      - name: Create AVD
-        env:
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-        run: |
-          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86" --device "pixel"
-      - name: Start emulator
-        env:
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-        run: |
-          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -accel auto &
-          # Wait for emulator to start
-          TIMEOUT=0
-          until adb devices | grep emulator; do
-            sleep 10
-            TIMEOUT=$((TIMEOUT + 10))
-            if [ $TIMEOUT -gt 600 ]; then  # Increase timeout to 10 minutes (600 seconds)
-              echo "Emulator did not start within 10 minutes, exiting."
-              exit 1
-            fi
-          done
-          # Unlock screen
-          adb shell input keyevent 82
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
       - name: Verify emulator is running
         run: adb devices
 
