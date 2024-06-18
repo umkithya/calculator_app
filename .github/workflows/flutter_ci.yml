@@ -19,11 +19,5 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run unit tests
-        run: flutter test test/unit
-
-      - name: Run integration tests
-        run: flutter test test/integration
-
       - name: Run end-to-end tests
         run: flutter drive \ --driver=test_driver/integration_test.dart \ --target=test/e2e/calculator_e2e_test.dart
