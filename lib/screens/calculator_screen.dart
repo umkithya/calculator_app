@@ -29,70 +29,85 @@ class CalculatorScreen extends StatelessWidget {
           if (state is CalculatorDisplay) {
             display = state.result.isNotEmpty ? state.result : state.expression;
           }
-          return Column(children: <Widget>[
-            Expanded(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 25),
-                alignment: Alignment.bottomRight,
-                child: LayoutBuilder(
-                  builder: (context, constraints) => FittedBox(
-                    fit: BoxFit.contain,
-                    child: Text(
-                      key: const ValueKey('display'),
-                      display.toString(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 36),
+          return Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width > 600 ? 600 : null,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 25),
+                        alignment: Alignment.bottomRight,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) => FittedBox(
+                            fit: BoxFit.contain,
+                            child: Text(
+                              key: const ValueKey('display'),
+                              display.toString(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width > 600
+                                          ? 54
+                                          : 36),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                    ButtonGrid(
+                      values: const [
+                        'sin',
+                        'cos',
+                        'tan',
+                        'CE',
+                        'sqrt',
+                        'log',
+                        'log',
+                        '^',
+                        'e',
+                        '(',
+                        ')',
+                        '/',
+                        '7',
+                        '8',
+                        '9',
+                        '*',
+                        '4',
+                        '5',
+                        '6',
+                        '-',
+                        '1',
+                        '2',
+                        '3',
+                        '+',
+                        '0',
+                        '.',
+                        '⌫',
+                        '='
+                      ],
+                      onPressed: (value) {
+                        if (value == '=') {
+                          context
+                              .read<CalculatorBloc>()
+                              .add(EvaluateExpression());
+                        } else if (value == '⌫') {
+                          context.read<CalculatorBloc>().add(DeleteCharactor());
+                        } else if (value == 'CE') {
+                          context.read<CalculatorBloc>().add(ClearExpression());
+                        } else {
+                          context
+                              .read<CalculatorBloc>()
+                              .add(ButtonPressed(value));
+                        }
+                      },
+                    ),
+                  ]),
             ),
-            ButtonGrid(
-              values: const [
-                'sin',
-                'cos',
-                'tan',
-                'CE',
-                'sqrt',
-                'log',
-                'log',
-                '^',
-                'e',
-                '(',
-                ')',
-                '/',
-                '7',
-                '8',
-                '9',
-                '*',
-                '4',
-                '5',
-                '6',
-                '-',
-                '1',
-                '2',
-                '3',
-                '+',
-                '0',
-                '.',
-                '⌫',
-                '='
-              ],
-              onPressed: (value) {
-                if (value == '=') {
-                  context.read<CalculatorBloc>().add(EvaluateExpression());
-                } else if (value == '⌫') {
-                  context.read<CalculatorBloc>().add(DeleteCharactor());
-                } else if (value == 'CE') {
-                  context.read<CalculatorBloc>().add(ClearExpression());
-                } else {
-                  context.read<CalculatorBloc>().add(ButtonPressed(value));
-                }
-              },
-            ),
-          ]);
+          );
         },
       ),
     );

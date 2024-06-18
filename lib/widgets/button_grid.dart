@@ -16,10 +16,11 @@ class ButtonGrid extends StatelessWidget {
       itemCount: values.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        mainAxisSpacing: 6,
+        childAspectRatio: 1.3,
       ),
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) => CalculatorButton(
         props: CalculatorButtonModel(
           index: index,
