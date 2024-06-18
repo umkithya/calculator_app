@@ -8,7 +8,7 @@ void main() {
 
   testWidgets('Calculator end-to-end test', (WidgetTester tester) async {
     app.main();
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 5));
 
     // Find buttons by their text and tap them to perform '2 + 3 ='
     await tester.tap(find.text('2'));
@@ -21,9 +21,13 @@ void main() {
     await tester.pumpAndSettle();
 
     var display = find.byKey(const ValueKey('display'));
+    await tester.pumpAndSettle();
+
     //  Verify the widget exists
     expect(display, findsOneWidget);
     Text textWidget = tester.widget(display);
+    await tester.pumpAndSettle();
+
     // Verify the result is '5'
     expect(textWidget.data, '5');
 
@@ -43,6 +47,8 @@ void main() {
 
     // Verify the result is '42'
     textWidget = tester.widget(display);
+    await tester.pumpAndSettle();
+
     expect(textWidget.data, '42');
 
     // Clear the expression
@@ -63,7 +69,10 @@ void main() {
 
     // Verify the result is '0'
     textWidget = tester.widget(display);
+    await tester.pumpAndSettle();
+
     expect(textWidget.data, '0');
+    await tester.pumpAndSettle();
 
     // Open and check the history
     await tester.tap(find.byIcon(Icons.history));
