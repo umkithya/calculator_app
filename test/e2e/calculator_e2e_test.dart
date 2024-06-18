@@ -18,7 +18,7 @@ void main() {
     await tester.tap(find.text('3'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('='));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 3));
 
     var display = find.byKey(const ValueKey('display'));
     await tester.pumpAndSettle();
@@ -43,7 +43,7 @@ void main() {
     await tester.tap(find.text('6'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('='));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 3));
 
     // Verify the result is '42'
     textWidget = tester.widget(display);
@@ -65,7 +65,7 @@ void main() {
     await tester.tap(find.text(')'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('='));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 3));
 
     // Verify the result is '0'
     textWidget = tester.widget(display);
