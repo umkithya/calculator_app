@@ -32,12 +32,13 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: "3.19.6"
           # instead of "channel: stable", you could be more precise by specifying the exact version of Flutter you're using:
           # flutter-version: '<FLUTTER_VERSION>'
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
-        run: flutter test integration_test --verbose
+        run: flutter drive --driver=test_driver/integration_test.dart --target=test/e2e/calculator_e2e_test.dart
   # job responsible for running Flutter tests on Android devices
   android:
     runs-on: macos-11
@@ -53,6 +54,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: "3.19.6"
           # instead of "channel: stable", you could be more precise by specifying the exact version of Flutter you're using:
           # flutter-version: '<FLUTTER_VERSION>'
       - name: Install Flutter dependencies
