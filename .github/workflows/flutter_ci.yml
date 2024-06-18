@@ -38,7 +38,7 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Run integration tests
-        run: flutter drive --driver=test_driver/integration_test.dart --target=test/e2e/calculator_e2e_test.dart
+        run: flutter drive --driver=test_driver/integration_test.dart --target=test/e2e/calculator_e2e_test.dart -d E5F22F4B-BD90-4857-807F-5AB081BF9EB8
   # job responsible for running Flutter tests on Android devices
   android:
     runs-on: macos-11
