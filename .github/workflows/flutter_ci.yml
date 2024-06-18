@@ -57,8 +57,18 @@ jobs:
         env:
           ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
         run: |
-          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect &
-          adb wait-for-device
+          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-audio -no-window -gpu swiftshader_indirect -accel kvm &
+          # Wait for emulator to start
+          TIMEOUT=0
+          until adb devices | grep emulator; do
+            sleep 10
+            TIMEOUT=$((TIMEOUT + 10))
+            if [ $TIMEOUT -gt 600 ]; then  # Increase timeout to 10 minutes (600 seconds)
+              echo "Emulator did not start within 10 minutes, exiting."
+              exit 1
+            fi
+          done
+          # Unlock screen
           adb shell input keyevent 82
       - name: Verify emulator is running
         run: adb devices
