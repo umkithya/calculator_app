@@ -53,6 +53,6 @@ jobs:
       - name: Verify emulator is running
         run: adb devices
 
-      - name: Run end-to-end tests
+      - name: Run end-to-end test
         run: flutter drive --driver=test_driver/integration_test.dart --target=test/e2e/calculator_e2e_test.dart
 
