@@ -13,6 +13,7 @@ jobs:
         with:
           channel: stable
           flutter-version: "3.19.6"
+
       - run: flutter --version
 
       - name: Install dependencies
@@ -24,14 +25,32 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          script: ./gradlew connectedCheck
+      - name: Start emulator
+        run: |
+          nohup $HOME/android-sdk/emulator/emulator -avd test -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
+          sleep 30  # Adjust as necessary
+
+          # Wait for emulator to start
+          TIMEOUT=0
+          until adb devices | grep emulator; do
+            sleep 10
+            TIMEOUT=$((TIMEOUT + 10))
+            if [ $TIMEOUT -gt 600 ]; then  # Increase timeout to 10 minutes (600 seconds)
+              echo "Emulator did not start within 10 minutes, exiting."
+              exit 1
+            fi
+          done
+
+          # Unlock screen
+          adb shell input keyevent 82
 
       - name: Verify emulator is running
         run: adb devices
+
+      - name: Run tests with Gradle
+        run: |
+          cd android  # Navigate to the Android project directory
+          ./gradlew connectedCheck
 
       - name: Run end-to-end test
         run: flutter drive --driver=test_driver/integration_test.dart --target=test/e2e/calculator_e2e_test.dart
