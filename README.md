@@ -21,3 +21,7 @@ A simple calculator app built with Flutter and using the BLoC pattern for state 
    git clone https://github.com/umkithya/calculator_app.git
    cd calculator_app
    ```
+### This project uses GitHub Actions for continuous integration
+
+   ## Build and Test 
+      1. Unit Test(Functions and Widgets)
