@@ -76,8 +76,8 @@ void main() {
 
     // Open and check the history
     await tester.tap(find.byIcon(Icons.history));
-    await tester.pumpAndSettle();
 
+    await tester.pump(const Duration(seconds: 5));
     expect(find.text('2+3=5'), findsAny);
     expect(find.text('7*6=42'), findsAny);
     expect(find.text('sin(0)=0'), findsAny);
