@@ -17,6 +17,7 @@ class ButtonPressed extends CalculatorEvent {
 }
 
 class EvaluateExpression extends CalculatorEvent {}
+class SaveExpression extends CalculatorEvent {}
 
 class DeleteHistory extends CalculatorEvent {}
 

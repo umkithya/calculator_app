@@ -35,29 +35,7 @@ class CalculatorScreen extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 25),
-                        alignment: Alignment.bottomRight,
-                        child: LayoutBuilder(
-                          builder: (context, constraints) => FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              key: const ValueKey('display'),
-                              display.toString(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width > 600
-                                          ? 54
-                                          : 36),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildDisplay(context, display),
                     ButtonGrid(
                       values: const [
                         'sin',
@@ -66,7 +44,7 @@ class CalculatorScreen extends StatelessWidget {
                         'CE',
                         'sqrt',
                         'log',
-                        'log',
+                        'ln',
                         '^',
                         'e',
                         '(',
@@ -89,21 +67,7 @@ class CalculatorScreen extends StatelessWidget {
                         '⌫',
                         '='
                       ],
-                      onPressed: (value) {
-                        if (value == '=') {
-                          context
-                              .read<CalculatorBloc>()
-                              .add(EvaluateExpression());
-                        } else if (value == '⌫') {
-                          context.read<CalculatorBloc>().add(DeleteCharactor());
-                        } else if (value == 'CE') {
-                          context.read<CalculatorBloc>().add(ClearExpression());
-                        } else {
-                          context
-                              .read<CalculatorBloc>()
-                              .add(ButtonPressed(value));
-                        }
-                      },
+                      onPressed: (value) => _onButtonPressed(context, value),
                     ),
                   ]),
             ),
@@ -111,5 +75,43 @@ class CalculatorScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Widget _buildDisplay(BuildContext context, String display) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 25),
+        alignment: Alignment.bottomRight,
+        child: LayoutBuilder(
+          builder: (context, constraints) => FittedBox(
+            fit: BoxFit.contain,
+            child: Text(
+              key: const ValueKey('display'),
+              display.toString(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width > 600 ? 54 : 36,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onButtonPressed(BuildContext context, String value) {
+    final calculatorBloc = context.read<CalculatorBloc>();
+
+    if (value == '=') {
+      calculatorBloc.add(EvaluateExpression());
+      calculatorBloc.add(SaveExpression());
+    } else if (value == '⌫') {
+      calculatorBloc.add(DeleteCharactor());
+    } else if (value == 'CE') {
+      calculatorBloc.add(ClearExpression());
+    } else {
+      calculatorBloc.add(ButtonPressed(value));
+    }
   }
 }

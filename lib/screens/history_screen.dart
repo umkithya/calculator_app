@@ -27,36 +27,39 @@ class HistoryScreen extends StatelessWidget {
             return const Center(
               child: CircularProgressIndicator.adaptive(),
             );
-          }
-          if (state is CalculatorHistoryError) {
+          } else if (state is CalculatorHistoryError) {
             return Center(
               child: Text(state.message),
             );
+          } else if (state is CalculatorHistory) {
+            return _buildHistoryList(state.history);
+          } else {
+            return const Center(
+              child: Text('No history available.'),
+            );
           }
-
-          List<Calculation> history = [];
-          if (state is CalculatorHistory) {
-            history = state.history;
-          }
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: history.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: const Icon(Icons.history_toggle_off_outlined),
-                subtitle: Text(
-                  "${history[index].dateTime}",
-                  style: const TextStyle(fontSize: 12),
-                ),
-                title: Text(
-                  "${history[index].expression}=${history[index].result}",
-                  style: const TextStyle(fontSize: 16),
-                ),
-              );
-            },
-          );
         },
       ),
+    );
+  }
+
+  Widget _buildHistoryList(List<Calculation> history) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: history.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: const Icon(Icons.history_toggle_off_outlined),
+          title: Text(
+            "${history[index].expression} = ${history[index].result}",
+            style: const TextStyle(fontSize: 16),
+          ),
+          subtitle: Text(
+            "${history[index].dateTime}",
+            style: const TextStyle(fontSize: 12),
+          ),
+        );
+      },
     );
   }
 
@@ -84,6 +87,37 @@ class HistoryScreen extends StatelessWidget {
                 context.read<CalculatorBloc>().add(DeleteHistory());
               },
               child: const Text("OK")),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteHistory(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (childContext) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.delete),
+            SizedBox(width: 8),
+            Text("Delete History"),
+          ],
+        ),
+        content: const Text("Are you sure you want to delete the history?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(childContext).maybePop();
+            },
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(childContext).maybePop();
+              context.read<CalculatorBloc>().add(DeleteHistory());
+            },
+            child: const Text("OK"),
+          ),
         ],
       ),
     );

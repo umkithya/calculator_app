@@ -37,7 +37,6 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_bloc: ^8.1.5
   equatable: ^2.0.5
-  expressions: ^0.2.5+1
   shared_preferences: ^2.2.3
   font_awesome_flutter: ^10.7.0
   phosphor_flutter: ^2.1.0
